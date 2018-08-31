@@ -1,0 +1,50 @@
+﻿@using ECommerceShoppingCartMVC.Models;
+
+@{
+    ViewBag.Title = "Cos de cumparaturi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="wow fadeInUp">Cosul tau</h2>
+
+<table class="table table-striped table-hover" style=" width:55%;">
+
+    <tr>
+        <th>Option</th>
+        <th>Id</th>
+        <th>Nume</th>
+        <th>Pret</th>
+        <th>Cantitate</th>
+        <th>SubTotal</th>
+    </tr>
+    @{
+        decimal s = 0; 
+    }
+    @foreach (Item item in (List<Item>)Session["cart"]) 
+    {
+
+        s = s + item.Produs.Pret * item.Cantitate; 
+
+        <tr>
+            <td>@Html.ActionLink("Sterge", "Delete", "CosCumparaturi", new { id = item.Produs.Id }, new { @class="btn btn-default" })</td>
+            <td>@item.Produs.Id</td>
+            <td>@item.Produs.Nume</td>
+            <td>@Math.Round(item.Produs.Pret, 2) LEI</td>
+            <td>@item.Cantitate</td>    
+           
+            <td>@Math.Round((item.Produs.Pret * item.Cantitate), 2) LEI</td>
+        </tr>
+    }
+    <tr>
+        <td align="right" colspan="5"><strong>Total de plata:</strong></td>
+        <td>@Math.Round(s, 2) LEI</td>
+    </tr>
+</table>
+<p>
+    @Html.ActionLink("Continua cumparaturile", "List", "Produse")
+</p>
+<p>
+    @Html.ActionLink("Confirma", "ConfirmationMessage", "CosCumparaturi", new { @class = "btn btn-default" })
+</p>
+
+
