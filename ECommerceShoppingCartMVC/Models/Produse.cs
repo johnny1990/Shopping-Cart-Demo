@@ -16,8 +16,10 @@ namespace ECommerceShoppingCartMVC.Models
     public partial class Produse
     {
         public int Id { get; set; }
+
         [Required]
         public string Nume { get; set; }
+
         [Required]
         public decimal Pret { get; set; }
     }
