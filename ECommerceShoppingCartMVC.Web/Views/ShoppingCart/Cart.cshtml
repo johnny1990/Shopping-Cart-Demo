@@ -1,0 +1,48 @@
+﻿@using ECommerceShoppingCartMVC.Web.Models;
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<h2>Index</h2>
+
+<h2 class="wow fadeInUp">Cosul tau</h2>
+
+<table class="table table-striped table-hover" style=" width:55%;">
+
+    <tr>
+        <th>Option</th>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>SubTotal</th>
+    </tr>
+    @{
+        decimal s = 0;
+    }
+    @foreach (Item item in (List<Item>)Session["cart"])
+    {
+
+        s = s + item.Product.Price * item.Quantity;
+
+        <tr>
+            <td>@Html.ActionLink("Delete", "Delete", "ShoppingCart", new { id = item.Produs.Id }, new { @class = "btn btn-default" })</td>
+            <td>@item.Product.Id</td>
+            <td>@item.Product.Name</td>
+            <td>@Math.Round(item.Product.Price, 2) $</td>
+            <td>@item.Quantity</td>
+
+            <td>@Math.Round((item.Product.Price * item.Quantity), 2) LEI</td>
+        </tr>
+    }
+    <tr>
+        <td align="right" colspan="5"><strong>Total :</strong></td>
+        <td>@Math.Round(s, 2) $</td>
+    </tr>
+</table>
+<p>
+    @Html.ActionLink("Continue shopping", "List", "Products")
+</p>
+<p>
+    @Html.ActionLink("Confirm", "ConfirmationMessage", "ShoppingCart", new { @class = "btn btn-default" })
+</p>
