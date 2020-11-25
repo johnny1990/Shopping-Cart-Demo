@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceShoppingCartMVC.Web.Tests.Controllers
 {
-    public class ProduseControllerTest
+    class ShoppngCartTest
     {
-
     }
 }

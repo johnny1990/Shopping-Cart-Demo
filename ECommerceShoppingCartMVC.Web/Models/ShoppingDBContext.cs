@@ -8,6 +8,9 @@ namespace ECommerceShoppingCartMVC.Web.Models
 {
     public class ShoppingDBContext : DbContext
     {
+        public ShoppingDBContext()
+        {
+        }
 
         public ShoppingDBContext(DbContextOptions<ShoppingDBContext> options) : base(options)
         {

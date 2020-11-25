@@ -4,9 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using ECommerceShoppingCartMVC.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
+using ECommerceShoppingCartMVC.Web.Helpers;
+//using System.Web.Mvc;
+
 
 namespace ECommerceShoppingCartMVC.Web.Controllers
 {
+    [Route("ShoppingCart")]
     public class ShoppingCartController : Controller
     {
         private readonly ShoppingDBContext _context;
@@ -16,75 +21,64 @@ namespace ECommerceShoppingCartMVC.Web.Controllers
             _context = context;
         }
 
-
-        #region Is product in the cart Method
-        private int isExisting(int id)
-        {
-            List<Item> cart = (List<Item>)Session["cart"];
-
-            for (int i = 0; i < cart.Count; i++)
-
-                if (cart[i].Product.Id == id)
-
-                    return i;
-
-            return -1;
-        }
-        #endregion
-
+        [Route("Index")]
         public IActionResult Cart()
         {
+            var cart = CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
+            ViewBag.Cart = cart;
+         
+            ViewBag.total = cart.Sum(item => item.Product.Price * item.Quantity);
             return View();
         }
 
-        public IActionResult Delete(int id)
+        [Route("Buy/{id}")]
+        public async Task<IActionResult> Buy(string id)
         {
-            int index = isExisting(id);
-
-            List<Item> cart = (List<Item>)Session["cart"];
-
-            cart.RemoveAt(index);
-
-
-            Session["cart"] = cart;
-
-            return View("Cart");
-        }
-
-        public IActionResult Add(int id)
-        {
-
-            if (Session["cart"] == null)
+            Product productModel = new Product();
+            if (CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart") == null)
             {
                 List<Item> cart = new List<Item>();
-
-                cart.Add(new Item(_context.Products.Find(id), 1));
-
-                Session["cart"] = cart;
+                cart.Add(new Item { Product = await _context.Products.FindAsync(int.Parse(id)), Quantity = 1 });
+                CartSessionHelper.SetObjectAsJson(HttpContext.Session, "cart", cart);
             }
             else
             {
-                List<Item> cart = (List<Item>)Session["cart"];
-
-                int index = isExisting(id);
-
-                if (index == -1)
-
-                    cart.Add(new Item(_context.Products.Find(id), 1));
-
-                else
-
+                List<Item> cart = CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
+                int index = isExist(id);
+                if (index != -1)
+                {
                     cart[index].Quantity++;
-
-                Session["cart"] = cart;
+                }
+                else
+                {
+                    cart.Add(new Item { Product = await _context.Products.FindAsync(id), Quantity = 1 });
+                }
+                CartSessionHelper.SetObjectAsJson(HttpContext.Session, "cart", cart);
             }
-
-            return View("Cart");
+            return RedirectToAction("Cart");
         }
 
-        public IActionResult ConfirmationMessage()
+        [Route("Remove/{id}")]
+        public IActionResult Delete(string id)
         {
-            return View();
+            List<Item> cart = CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
+            int index = isExist(id);
+            cart.RemoveAt(index);
+            CartSessionHelper.SetObjectAsJson(HttpContext.Session, "cart", cart);
+            return RedirectToAction("Index");
+        }
+
+        private int isExist(string id)
+        {
+            List<Item> cart = CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
+            for (int i = 0; i < cart.Count; i++)
+            {
+                if (cart[i].Product.Id.Equals(id))
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 }

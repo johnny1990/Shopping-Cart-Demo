@@ -36,6 +36,7 @@ namespace ECommerceShoppingCartMVC.Web
             options.UseSqlServer(Configuration.GetConnectionString("ShoppingDBEntities")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +51,7 @@ namespace ECommerceShoppingCartMVC.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseSession();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 

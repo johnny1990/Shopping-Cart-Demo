@@ -1,4 +1,4 @@
-﻿@using ECommerceShoppingCartMVC.Web.Models;
+﻿@*@using ECommerceShoppingCartMVC.Web.Models;*@
 @{
     ViewData["Title"] = "Cart";
 }
@@ -20,13 +20,13 @@
     @{
         decimal s = 0;
     }
-    @foreach (Item item in (List<Item>)Session["cart"])
+    @foreach (var item in ViewBag.Cart)
     {
 
         s = s + item.Product.Price * item.Quantity;
 
         <tr>
-            <td>@Html.ActionLink("Delete", "Delete", "ShoppingCart", new { id = item.Produs.Id }, new { @class = "btn btn-default" })</td>
+            <td>@Html.ActionLink("Delete", "Delete", "ShoppingCart", new { id = item.Product.Id }, new { @class = "btn btn-default" })</td>
             <td>@item.Product.Id</td>
             <td>@item.Product.Name</td>
             <td>@Math.Round(item.Product.Price, 2) $</td>

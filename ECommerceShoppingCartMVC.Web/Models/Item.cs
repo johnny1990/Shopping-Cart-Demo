@@ -7,34 +7,10 @@ namespace ECommerceShoppingCartMVC.Web.Models
 {
     public class Item
     {
-        private Product prod = new Product();
 
-        #region Properties
-        public Product Product
-        {
-            get { return prod; }
-            set { prod = value; }
-        }
-        private int quantity;
+            public Product Product { get; set; }
 
-        public int Quantity
-        {
-            get { return quantity; }
-            set { quantity = value; }
-        }
-        #endregion
-
-        #region Constructors
-        public Item()
-        {
-
-        }
-
-        public Item(Product product, int qty)
-        {
-            this.prod = product;
-            this.quantity = qty;
-        }
-        #endregion
+            public int Quantity { get; set; }
+      
     }
 }
