@@ -11,7 +11,7 @@ using ECommerceShoppingCartMVC.Web.Helpers;
 
 namespace ECommerceShoppingCartMVC.Web.Controllers
 {
-    [Route("ShoppingCart")]
+    //[Route("ShoppingCart")]
     public class ShoppingCartController : Controller
     {
         private readonly ShoppingDBContext _context;
@@ -21,7 +21,6 @@ namespace ECommerceShoppingCartMVC.Web.Controllers
             _context = context;
         }
 
-        [Route("Index")]
         public IActionResult Cart()
         {
             var cart = CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
@@ -31,20 +30,19 @@ namespace ECommerceShoppingCartMVC.Web.Controllers
             return View();
         }
 
-        [Route("Buy/{id}")]
-        public async Task<IActionResult> Buy(string id)
+        public async Task<IActionResult> Buy(int id)
         {
             Product productModel = new Product();
             if (CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart") == null)
             {
                 List<Item> cart = new List<Item>();
-                cart.Add(new Item { Product = await _context.Products.FindAsync(int.Parse(id)), Quantity = 1 });
+                cart.Add(new Item { Product = await _context.Products.FindAsync(id), Quantity = 1 });
                 CartSessionHelper.SetObjectAsJson(HttpContext.Session, "cart", cart);
             }
             else
             {
                 List<Item> cart = CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
-                int index = isExist(id);
+                int index = isExisting(id);
                 if (index != -1)
                 {
                     cart[index].Quantity++;
@@ -58,26 +56,28 @@ namespace ECommerceShoppingCartMVC.Web.Controllers
             return RedirectToAction("Cart");
         }
 
-        [Route("Remove/{id}")]
-        public IActionResult Delete(string id)
+        public IActionResult Delete(int id)
         {
+
             List<Item> cart = CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
-            int index = isExist(id);
+            int index = isExisting(id);
             cart.RemoveAt(index);
             CartSessionHelper.SetObjectAsJson(HttpContext.Session, "cart", cart);
-            return RedirectToAction("Index");
+            return RedirectToAction("cart");
         }
 
-        private int isExist(string id)
+        private int isExisting(int id)
         {
             List<Item> cart = CartSessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
             for (int i = 0; i < cart.Count; i++)
             {
-                if (cart[i].Product.Id.Equals(id))
+                if (cart[i].Product.Id.Equals(id))//
                 {
                     return i;
                 }
+                
             }
+
             return -1;
         }
     }
